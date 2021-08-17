@@ -21,7 +21,7 @@ def pretty_print_bulletin(bulletin: dict, stm):
             print(period_name + ': ' + ' | '.join([' '.join(x) for x in sentences]), file=stm)
         print('-' * 120, file=stm)
 
-    for field_name in ['accum', 'avert', 'ciel', 'climat_temp', 'indice_uv', 'pcpn', 'prob', 'rosee', 'temp', 'vents']:
+    for field_name in ['accum', 'avert', 'ciel', 'climat_temp', 'indice_uv', 'pcpn', 'prob', 'rosee', 'temp', 'vents', 'visib']:
         if field_name in bulletin:
             print(field_name, file=stm)
             print('-' * 120, file=stm)
