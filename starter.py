@@ -13,7 +13,8 @@ def main():
 
     input_filename = sys.argv[1]
 
-    # read the bulletins and count wordss
+    # =============================================================================================
+    # read the bulletins and count words
     print(f"Reading all bulletins in {input_filename}", flush=True)
 
     nb_bulletins = 0
@@ -29,6 +30,7 @@ def main():
     print(f"Read {nb_bulletins} bulletins. {nb_toks_english} English tokens, {nb_toks_french} French tokens.")
     print("\n\n")
 
+    # =============================================================================================
     # show a sample bulletin
     print("A sample bulletin:")
     with open(input_filename, 'rt', encoding='utf-8') as fin:
@@ -36,6 +38,7 @@ def main():
         bulletin = json.loads(cur_line)
         pretty_print_bulletin(bulletin, sys.stdout)
 
+    # =============================================================================================
     # try and evaluate a sample (dummy) generation system for English
     # first we read a few thousand bulletins...
     print("Running a dummy natural language generation system on first 1000 bulletins...")
