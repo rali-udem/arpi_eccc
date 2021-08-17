@@ -1,7 +1,8 @@
 import json
 import sys
 
-from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin
+from arpi_eccc.nlg_evaluation import bleu_evaluation
+from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin, dummy_nlg_english
 
 
 def main():
@@ -13,7 +14,7 @@ def main():
     input_filename = sys.argv[1]
 
     # read the bulletins and count wordss
-    print(f"Reading all bulletins in {input_filename}", file=sys.stderr, flush=True)
+    print(f"Reading all bulletins in {input_filename}", flush=True)
 
     nb_bulletins = 0
     nb_toks_english = 0
@@ -25,22 +26,39 @@ def main():
             nb_toks_english += get_nb_tokens(bulletin, 'en')
             nb_toks_french += get_nb_tokens(bulletin, 'fr')
 
-    print(f"Read {nb_bulletins} bulletins. {nb_toks_english} English tokens, {nb_toks_french} French tokens.",
-          file=sys.stderr)
-    print("\n\n", file=sys.stderr)
+    print(f"Read {nb_bulletins} bulletins. {nb_toks_english} English tokens, {nb_toks_french} French tokens.")
+    print("\n\n")
 
     # show a sample bulletin
+    print("A sample bulletin:")
     with open(input_filename, 'rt', encoding='utf-8') as fin:
         cur_line = next(fin)
         bulletin = json.loads(cur_line)
-        pretty_print_bulletin(bulletin, sys.stderr)
+        pretty_print_bulletin(bulletin, sys.stdout)
 
     # try and evaluate a sample (dummy) generation system for English
+    # first we read a few thousand bulletins...
+    print("Running a dummy natural language generation system...")
+    bulletins = []
+    with open(input_filename, 'rt', encoding='utf-8') as fin:
+        for cur_line in fin:
+            bulletin = json.loads(cur_line)
+            bulletins.append(bulletin)
+            if len(bulletins) > 5000:
+                print("Using only first 5000 bulletins for this.")
+                break
 
+    # ...then we run a dummy NLG (natural language generation) system on those bulletins for English...
+    nlg_results = []  # our NLG results, for English
+    reference = []  # the reference, for English
+    for bulletin in bulletins:
+        nlg_result = dummy_nlg_english(bulletin)  # the nlg_result is a dict with structure identical to bulletin['en']['tok']
+        nlg_results.append(nlg_result)
+        reference.append(bulletin['en']['tok'])
 
-
-
-
+    # ...now we can evaluate the NLG system using the two lists created above...
+    evaluation = bleu_evaluation(nlg_results, reference)
+    print(f"Dummy system performance is {0}")
 
 
 if __name__ == '__main__':

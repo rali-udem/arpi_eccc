@@ -1,5 +1,4 @@
 import pprint
-import sys
 
 
 def get_nb_tokens(bulletin: dict, lang: str) -> int:
@@ -27,3 +26,7 @@ def pretty_print_bulletin(bulletin: dict, stm):
             print('-' * 120, file=stm)
             pprint.pprint(bulletin[field_name], stream=stm)
             print('-' * 120, file=stm)
+
+
+def dummy_nlg_english(bulletin: dict) -> dict:
+    return {}
