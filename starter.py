@@ -38,17 +38,17 @@ def main():
 
     # try and evaluate a sample (dummy) generation system for English
     # first we read a few thousand bulletins...
-    print("Running a dummy natural language generation system...")
+    print("Running a dummy natural language generation system on first 1000 bulletins...")
     bulletins = []
     with open(input_filename, 'rt', encoding='utf-8') as fin:
         for cur_line in fin:
             bulletin = json.loads(cur_line)
             bulletins.append(bulletin)
-            if len(bulletins) > 5000:
-                print("Using only first 5000 bulletins for this.")
+            if len(bulletins) >= 1000:
                 break
 
     # ...then we run a dummy NLG (natural language generation) system on those bulletins for English...
+    print("Evaluating...")
     nlg_results = []  # our NLG results, for English
     reference = []  # the reference, for English
     for bulletin in bulletins:
@@ -56,9 +56,13 @@ def main():
         nlg_results.append(nlg_result)
         reference.append(bulletin['en']['tok'])
 
-    # ...now we can evaluate the NLG system using the two lists created above...
+    # ...now we can evaluate the NLG system using the two lists created above.
     evaluation = bleu_evaluation(nlg_results, reference)
-    print(f"Dummy system performance is {0}")
+    print(f"Dummy system performance:")
+    for period in ['today', 'tonight', 'tomorrow', 'tomorrow_night']:
+        print(f"For bulletin period {period}, BLEU score is {evaluation[period]}")
+    print()
+    print(f"Global score is {evaluation['global']}")
 
 
 if __name__ == '__main__':
