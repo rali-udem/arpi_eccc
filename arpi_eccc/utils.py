@@ -38,8 +38,7 @@ def dummy_nlg_english(bulletin: dict) -> dict:
     """
 
     # we need to have the same periods as in the input
-    result = bulletin['en']['tok']
-    #result = {period_name: [] for period_name in bulletin['en']['tok'].keys()}
+    result = {period_name: [] for period_name in bulletin['en']['tok'].keys()}
 
     # we provide dummy results
     for period_name, sentence_list in result.items():

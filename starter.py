@@ -60,9 +60,9 @@ def main():
     evaluation = bleu_evaluation(nlg_results, reference)
     print(f"Dummy system performance:")
     for period in ['today', 'tonight', 'tomorrow', 'tomorrow_night']:
-        print(f"For bulletin period {period}, BLEU score is {evaluation[period]}")
+        print(f"For bulletin period {period}, BLEU score is {evaluation[period]:.3f} on a scale from 0 to 1")
     print()
-    print(f"Global score is {evaluation['global']}")
+    print(f"Global score is {evaluation['global']:.3f}")
 
 
 if __name__ == '__main__':
