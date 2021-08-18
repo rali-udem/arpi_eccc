@@ -1,4 +1,23 @@
+import os
 import pprint
+from datetime import datetime
+
+
+def __load_timeranges():
+    result = {}
+    rsrc_filename = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'timeranges.txt')
+    with open(rsrc_filename, 'rt', encoding='utf-8') as fin:
+        for line in fin:
+            parts = line.strip().split('|')
+            assert len(parts) == 6
+            region, issue_hour, _, start, end, period_name = parts
+            result[region] = result.get(region, {'today': {}, 'tonight': {}, 'tomorrow': {}, 'tomorrow_night': {}})
+            result[region][period_name][int(issue_hour)] = (int(start), int(end))
+
+    return result
+
+
+__PERIOD_TO_TIMERANGE = __load_timeranges()
 
 
 def get_nb_tokens(bulletin: dict, lang: str) -> int:
@@ -46,3 +65,26 @@ def dummy_nlg_english(bulletin: dict) -> dict:
         sentence_list.append(['Wind', 'up', 'to', '15', 'km/h', '.'])  # second sentence for this period
 
     return result
+
+
+# taken from https://en.wikipedia.org/wiki/Daylight_saving_time_in_the_United_States
+__DST2018 = (datetime(2018, 3, 11), datetime(2018, 11, 4))
+__DST2019 = (datetime(2019, 3, 10), datetime(2019, 11, 3))
+
+
+def get_time_interval_for_period(bulletin: dict, period: str) -> tuple:
+    """
+    Returns the time interval (start hour, end hour) for the given period.
+    :param bulletin: The bulletin.
+    :param period: One of `today`, `tonight`, `tomorrow`, `tomorrow_night`
+    :return: A tuple (start hour, end hour)
+    """
+    issue_time_utc = bulletin['header'][7]  # e.g. 2045 (always UTC)
+    issue_date = datetime(bulletin['header'][4], bulletin['header'][5], bulletin['header'][6])
+    is_dst = __DST2018[0] < issue_date < __DST2018[1] or __DST2019[0] < issue_date < __DST2019[1]
+    delta_with_utc = +4 if is_dst else +5
+    issue_time_local = issue_time_utc - delta_with_utc * 100
+    station = bulletin['header'][0]
+    local_range = __PERIOD_TO_TIMERANGE[station][period][issue_time_local]
+    utc_range = (local_range[0] + delta_with_utc, local_range[1] + delta_with_utc)
+    return utc_range

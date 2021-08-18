@@ -2,7 +2,7 @@ import json
 import sys
 
 from arpi_eccc.nlg_evaluation import bleu_evaluation
-from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin, dummy_nlg_english
+from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin, dummy_nlg_english, get_time_interval_for_period
 
 
 def main():
@@ -35,8 +35,21 @@ def main():
     print("A sample bulletin:")
     with open(input_filename, 'rt', encoding='utf-8') as fin:
         cur_line = next(fin)
-        bulletin = json.loads(cur_line)
-        pretty_print_bulletin(bulletin, sys.stdout)
+        sample_bulletin = json.loads(cur_line)
+        pretty_print_bulletin(sample_bulletin, sys.stdout)
+
+    print('\n\n')
+
+    # =============================================================================================
+    # demonstrate what periods correspond to which time intervals in the data
+    bulletin_periods = sample_bulletin['en']['tok'].keys()
+    print(f"The sample bulletin has the following periods: {bulletin_periods}")
+    print(f"These periods correspond to the following time intervals in the weather data:")
+    for period in bulletin_periods:
+        time_interval = get_time_interval_for_period(bulletin, period)
+        print(f"Period '{period}' corresponds to time interval {time_interval} (in hours)")
+
+    print('\n\n')
 
     # =============================================================================================
     # try and evaluate a sample (dummy) generation system for English
