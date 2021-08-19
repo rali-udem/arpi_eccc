@@ -6,7 +6,7 @@ from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin, dummy_nlg_engl
 
 
 def main():
-    """A quick demo"""
+    """A quick demo to show how to start this project."""
     if len(sys.argv) != 2:
         print("Usage: prog input.jsonl", file=sys.stderr)
         sys.exit(1)

@@ -1,5 +1,6 @@
 import os
 import pprint
+import sys
 from datetime import datetime
 
 
@@ -74,17 +75,30 @@ __DST2019 = (datetime(2019, 3, 10), datetime(2019, 11, 3))
 
 def get_time_interval_for_period(bulletin: dict, period: str) -> tuple:
     """
-    Returns the time interval (start hour, end hour) for the given period.
+    Returns the time interval (start hour UTC, end hour UTC) for the given period.
     :param bulletin: The bulletin.
     :param period: One of `today`, `tonight`, `tomorrow`, `tomorrow_night`
-    :return: A tuple (start hour, end hour)
+    :return: A tuple (start hour, end hour) in UTC, i.e. the same timezone as the hours in the meteocode data.
     """
     issue_time_utc = bulletin['header'][7]  # e.g. 2045 (always UTC)
     issue_date = datetime(bulletin['header'][4], bulletin['header'][5], bulletin['header'][6])
-    is_dst = __DST2018[0] < issue_date < __DST2018[1] or __DST2019[0] < issue_date < __DST2019[1]
+    is_dst = __DST2018[0] <= issue_date < __DST2018[1] or __DST2019[0] <= issue_date < __DST2019[1]
     delta_with_utc = +4 if is_dst else +5
     issue_time_local = issue_time_utc - delta_with_utc * 100
     station = bulletin['header'][0]
-    local_range = __PERIOD_TO_TIMERANGE[station][period][issue_time_local]
+
+    try:
+        local_range = __PERIOD_TO_TIMERANGE[station][period][issue_time_local]
+    except KeyError:
+        # this happens when a period is missing from the DB for a given issue_time_local. Recovery attempt necessary.
+        # print(f"Invalid issue_time_local: {issue_time_local}", file=sys.stderr)
+        periods = ['today', 'tonight', 'tomorrow', 'tomorrow_night']
+        local_range = None
+        for recovery_period in periods:
+            if issue_time_local in __PERIOD_TO_TIMERANGE[station][recovery_period]:
+                local_range = __PERIOD_TO_TIMERANGE[station][recovery_period][issue_time_local]
+                # print(f"Recovered with {local_range}", file=sys.stderr)
+                break
+
     utc_range = (local_range[0] + delta_with_utc, local_range[1] + delta_with_utc)
     return utc_range
