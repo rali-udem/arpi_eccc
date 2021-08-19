@@ -47,7 +47,7 @@ def main():
     print(f"These periods correspond to the following time intervals in the weather data:")
     for period in bulletin_periods:
         time_interval = get_time_interval_for_period(bulletin, period)
-        print(f"Period '{period}' corresponds to time interval {time_interval} (in hours)")
+        print(f"Period '{period}' corresponds to time interval [{time_interval[0]}, {time_interval[1]}] (in hours)")
 
     print('\n\n')
 
