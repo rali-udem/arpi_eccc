@@ -53,7 +53,7 @@ def dummy_nlg_english(bulletin: dict) -> dict:
     A NLG system should return a dict with the same structure as that in the field bulletin['en' or 'fr']['tok'], i.e.
     the same periods (e.g. today) with the corresponding text, as list of sentences. Each sentence is a list of strings.
 
-    :param bulletin: The input bulleting.
+    :param bulletin: The input bulletin.
     :return: The NLG dict, for English here.
     """
 
