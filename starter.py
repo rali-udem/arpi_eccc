@@ -46,7 +46,7 @@ def main():
     # demonstrate what periods correspond to which time intervals in the data
     bulletin_periods = sample_bulletin['en']['tok'].keys()
     print(f"The sample bulletin has the following periods: {bulletin_periods}")
-    print(f"These periods correspond to the following time intervals in the weather data:")
+    print(f"These periods correspond to the following time intervals in this bulletin's weather data:")
     for period in bulletin_periods:
         time_interval = get_time_interval_for_period(bulletin, period)
         print(f"Period '{period}' corresponds to time interval [{time_interval[0]}, {time_interval[1]}] (in hours)")
@@ -55,8 +55,8 @@ def main():
 
     # =============================================================================================
     # try and evaluate a sample (dummy) generation system for English
-    # first we read a few thousand bulletins...
     print("Running a dummy natural language generation system on first 1000 bulletins...")
+    # first we read a few thousand bulletins...
     bulletins = []
     with open(input_filename, 'rt', encoding='utf-8') as fin:
         for cur_line in fin:
