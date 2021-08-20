@@ -2,6 +2,7 @@ import json
 import sys
 
 from arpi_eccc.nlg_evaluation import bleu_evaluation
+from arpi_eccc.pp_json import pp_json
 from arpi_eccc.utils import get_nb_tokens, pretty_print_bulletin, dummy_nlg_english, get_time_interval_for_period
 
 
@@ -36,7 +37,8 @@ def main():
     with open(input_filename, 'rt', encoding='utf-8') as fin:
         cur_line = next(fin)
         sample_bulletin = json.loads(cur_line)
-        pretty_print_bulletin(sample_bulletin, sys.stdout)
+        # pretty_print_bulletin(sample_bulletin, sys.stdout)  # for a non-JSON output
+        pp_json(sys.stdout, sample_bulletin, sortkeys=False)
 
     print('\n\n')
 
