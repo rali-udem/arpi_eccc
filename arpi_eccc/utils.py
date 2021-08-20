@@ -80,10 +80,7 @@ def get_time_interval_for_period(bulletin: dict, period: str) -> tuple:
     :param period: One of `today`, `tonight`, `tomorrow`, `tomorrow_night`
     :return: A tuple (start hour, end hour) in UTC, i.e. the same timezone as the hours in the meteocode data.
     """
-    issue_time_utc = bulletin['header'][7]  # e.g. 2045 (always UTC)
-    issue_date = datetime(bulletin['header'][4], bulletin['header'][5], bulletin['header'][6])
-    is_dst = __DST2018[0] <= issue_date < __DST2018[1] or __DST2019[0] <= issue_date < __DST2019[1]
-    delta_with_utc = +4 if is_dst else +5
+    delta_with_utc, issue_time_utc = get_delta_with_utc(bulletin)
     issue_time_local = issue_time_utc - delta_with_utc * 100
     station = bulletin['header'][0]
 
@@ -102,3 +99,16 @@ def get_time_interval_for_period(bulletin: dict, period: str) -> tuple:
 
     utc_range = (local_range[0] + delta_with_utc, local_range[1] + delta_with_utc)
     return utc_range
+
+
+def get_delta_with_utc(bulletin: dict):
+    """
+    Gets time shift with UTC for the given bulletin.
+    :param bulletin: The bulletin.
+    :return: Returns UTC shift, usually +4 if in daylight saving time, or +5
+    """
+    issue_time_utc = bulletin['header'][7]  # e.g. 2045 (always UTC)
+    issue_date = datetime(bulletin['header'][4], bulletin['header'][5], bulletin['header'][6])
+    is_dst = __DST2018[0] <= issue_date < __DST2018[1] or __DST2019[0] <= issue_date < __DST2019[1]
+    delta_with_utc = +4 if is_dst else +5
+    return delta_with_utc, issue_time_utc
