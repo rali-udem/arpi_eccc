@@ -16,9 +16,9 @@ def meteocode_tensor_for_field(bulletin: dict, for_hour: int, field_name: str, d
 
     result = None
 
-    if field_name == 'temp':
+    if field_name == 'temp':  # 1-dimensional np tensor of size 7
         field_2 = temp_2_encoder.encode(data_point[2])
-        result = np.concatenate([field_2, [data_point[3]]])  # we ignore fields 4:
+        result = np.concatenate([field_2, [data_point[3]]])  # we ignore fields 4 and next
 
     return result
 
@@ -41,8 +41,11 @@ def meteocode_tensors(bulletin: dict, start_hour: int, end_hour: int, field_list
             if cur_hour not in result:
                 result[cur_hour] = []
 
-            result[cur_hour].extend(meteocode_tensor_for_field(bulletin, cur_hour, field_name,
+            result[cur_hour].append(meteocode_tensor_for_field(bulletin, cur_hour, field_name,
                                                                hour_to_datapoints_map[cur_hour]))
+
+    # finally, when we are done for each hour, we concatenate the field tensors for each hour
+    result[cur_hour] = np.concatenate(result[cur_hour])
 
     return result
 
