@@ -1,3 +1,6 @@
+"""
+Not the fastest of codes, but builds tensors for meteocode data, considerably simplifying the information.
+"""
 import json
 
 import numpy as np
@@ -23,7 +26,17 @@ def meteocode_tensor_for_field(bulletin: dict, for_hour: int, field_name: str, d
     return result
 
 
-def meteocode_tensors(bulletin: dict, start_hour: int, end_hour: int, field_list: list):
+def meteocode_tensors(bulletin: dict, start_hour: int, end_hour: int, field_list: list) -> dict:
+    """
+    Returns a dict mapping an hour in the range [start_hour, end_hour] to a tensor representing the meteocode
+    info a this hour.
+
+    :param bulletin:
+    :param start_hour:
+    :param end_hour:
+    :param field_list: The list of fields read to create the tensor.
+    :return: A dict.
+    """
     assert end_hour > start_hour, "Invalid time interval"
 
     result = {}
