@@ -73,8 +73,8 @@ def main():
     with open(input_filename, 'rt', encoding='utf-8') if input_filename != '-' else sys.stdin as fin:
         for line in fin:
             bulletin = json.loads(line)
-            start_hour, end_hour = get_time_interval_for_period(bulletin, 'today')
-            tensors = meteocode_tensors(bulletin, start_hour, end_hour, ['temp'])
+            start_hour, end_hour = get_time_interval_for_period(bulletin, 'today')  # a demo for 'today' only
+            tensors = meteocode_tensors(bulletin, start_hour, end_hour, ['temp'])  # only temp works for now
 
 
 if __name__ == '__main__':
