@@ -54,6 +54,7 @@ def main():
                     bulletin[lang]['tok'][period] = get_sentence_temperature(bulletin, period)
 
             json.dump(bulletin, fout, ensure_ascii=False)
+            fout.write('\n')
 
 
 if __name__ == '__main__':
